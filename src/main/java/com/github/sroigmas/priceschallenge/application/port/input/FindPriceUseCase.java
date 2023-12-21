@@ -1,4 +1,4 @@
-package com.github.sroigmas.priceschallenge.application;
+package com.github.sroigmas.priceschallenge.application.port.input;
 
 import com.github.sroigmas.priceschallenge.domain.Price;
 import java.time.ZonedDateTime;

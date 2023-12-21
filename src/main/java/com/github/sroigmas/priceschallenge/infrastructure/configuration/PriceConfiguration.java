@@ -1,6 +1,6 @@
 package com.github.sroigmas.priceschallenge.infrastructure.configuration;
 
-import com.github.sroigmas.priceschallenge.application.FindPriceService;
+import com.github.sroigmas.priceschallenge.application.service.FindPriceService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

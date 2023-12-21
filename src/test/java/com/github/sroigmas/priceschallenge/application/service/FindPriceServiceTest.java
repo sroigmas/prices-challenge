@@ -1,8 +1,8 @@
-package com.github.sroigmas.priceschallenge.application;
+package com.github.sroigmas.priceschallenge.application.service;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.github.sroigmas.priceschallenge.application.FindPriceUseCase.FindPriceQuery;
+import com.github.sroigmas.priceschallenge.application.port.input.FindPriceUseCase.FindPriceQuery;
 import com.github.sroigmas.priceschallenge.domain.Price;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
