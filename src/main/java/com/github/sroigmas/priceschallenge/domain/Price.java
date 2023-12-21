@@ -2,9 +2,11 @@ package com.github.sroigmas.priceschallenge.domain;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class Price {
   private Long id;
   private Brand brand;
