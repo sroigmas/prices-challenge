@@ -4,7 +4,6 @@ import com.github.sroigmas.priceschallenge.application.port.input.FindPriceUseCa
 import com.github.sroigmas.priceschallenge.application.port.input.FindPriceUseCase.FindPriceQuery;
 import com.github.sroigmas.priceschallenge.domain.Price;
 import java.time.ZonedDateTime;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,14 +20,14 @@ public class PriceController {
   private ModelMapper modelMapper;
 
   @GetMapping
-  public Optional<PriceResponse> getPriceByIdsAndDate(
+  public PriceResponse getPriceByIdsAndDate(
       @RequestParam ZonedDateTime date,
       @RequestParam("product_id") Long productId,
       @RequestParam("brand_id") Long brandId) {
-    Optional<Price> price =
+    Price price =
         findPriceUseCase.findPriceByIdsAndDate(
             FindPriceQuery.builder().date(date).productId(productId).brandId(brandId).build());
 
-    return price.map(p -> modelMapper.map(p, PriceResponse.class));
+    return modelMapper.map(price, PriceResponse.class);
   }
 }

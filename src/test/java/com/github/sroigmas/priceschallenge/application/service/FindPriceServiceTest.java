@@ -1,16 +1,17 @@
 package com.github.sroigmas.priceschallenge.application.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.github.sroigmas.priceschallenge.application.exception.ApplicationNotFoundException;
 import com.github.sroigmas.priceschallenge.application.port.input.FindPriceUseCase.FindPriceQuery;
 import com.github.sroigmas.priceschallenge.application.port.output.PriceRepository;
 import com.github.sroigmas.priceschallenge.domain.Brand;
 import com.github.sroigmas.priceschallenge.domain.Price;
 import java.math.BigDecimal;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,23 +29,30 @@ class FindPriceServiceTest {
   @Test
   void givenIdsAndDate_whenFindingPrice_thenPriceExists() {
     FindPriceQuery findPriceQuery = FindPriceQuery.builder().build();
-    Price price = buildPrice(1L, 1);
-    Mockito.when(priceRepository.findPricesByIdsAndDate(findPriceQuery)).thenReturn(List.of(price));
+    Price expectedPrice = buildPrice(1L, 1);
+    Mockito.when(priceRepository.findPricesByIdsAndDate(findPriceQuery))
+        .thenReturn(List.of(expectedPrice));
 
-    Optional<Price> priceOpt = findPriceService.findPriceByIdsAndDate(findPriceQuery);
+    Price actualPrice = findPriceService.findPriceByIdsAndDate(findPriceQuery);
 
-    assertTrue(priceOpt.isPresent());
-    assertEquals(price, priceOpt.get());
+    assertEquals(expectedPrice, actualPrice);
   }
 
   @Test
   void givenNoPrices_whenFindingPrice_thenPriceDoesntExist() {
-    FindPriceQuery findPriceQuery = FindPriceQuery.builder().build();
+    ZonedDateTime date = ZonedDateTime.of(2023, 12, 22, 12, 0, 0, 0, ZoneOffset.UTC);
+    FindPriceQuery findPriceQuery =
+        FindPriceQuery.builder().brandId(1L).productId(35455L).date(date).build();
     Mockito.when(priceRepository.findPricesByIdsAndDate(findPriceQuery)).thenReturn(List.of());
 
-    Optional<Price> priceOpt = findPriceService.findPriceByIdsAndDate(findPriceQuery);
+    ApplicationNotFoundException exception =
+        Assertions.assertThrows(
+            ApplicationNotFoundException.class,
+            () -> findPriceService.findPriceByIdsAndDate(findPriceQuery));
 
-    assertTrue(priceOpt.isEmpty());
+    assertEquals(
+        "Price for brandId=1, productId=35455 and date=2023-12-22T12:00Z could not be found.",
+        exception.getMessage());
   }
 
   @Test
@@ -55,10 +63,9 @@ class FindPriceServiceTest {
     Mockito.when(priceRepository.findPricesByIdsAndDate(findPriceQuery))
         .thenReturn(List.of(priceWithLessPriority, priceWithMorePriority));
 
-    Optional<Price> priceOpt = findPriceService.findPriceByIdsAndDate(findPriceQuery);
+    Price actualPrice = findPriceService.findPriceByIdsAndDate(findPriceQuery);
 
-    assertTrue(priceOpt.isPresent());
-    assertEquals(priceWithMorePriority, priceOpt.get());
+    assertEquals(priceWithMorePriority, actualPrice);
   }
 
   private Price buildPrice(Long id, Integer priority) {

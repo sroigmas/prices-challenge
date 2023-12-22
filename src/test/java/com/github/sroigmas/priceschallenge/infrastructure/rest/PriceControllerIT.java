@@ -55,6 +55,28 @@ class PriceControllerIT {
   }
 
   @Test
+  void givenNoPriceMatch_whenGettingPrice_thenReturnsNotFound() throws Exception {
+    ZonedDateTime date = ZonedDateTime.of(2023, 12, 22, 12, 0, 0, 0, ZoneOffset.UTC);
+    Long productId = 35455L;
+    Long brandId = 1L;
+
+    ResultActions result =
+        mvc.perform(
+                get("/api/v1/prices")
+                    .param("date", date.toString())
+                    .param("product_id", productId.toString())
+                    .param("brand_id", brandId.toString()))
+            .andDo(print());
+
+    result
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.status").value("NOT_FOUND"))
+        .andExpect(
+            jsonPath("$.message")
+                .value("Price for brandId=1, productId=35455 and date=2023-12-22T12:00Z could not be found."));
+  }
+
+  @Test
   void givenWrongTypeId_whenGettingPrice_thenReturnsBadRequest() throws Exception {
     ZonedDateTime date = ZonedDateTime.now();
     Long productId = 35455L;

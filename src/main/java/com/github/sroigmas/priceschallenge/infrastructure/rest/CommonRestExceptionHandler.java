@@ -1,5 +1,6 @@
 package com.github.sroigmas.priceschallenge.infrastructure.rest;
 
+import com.github.sroigmas.priceschallenge.application.exception.ApplicationNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,5 +24,12 @@ public class CommonRestExceptionHandler {
   public ErrorResponse handleMissingServletRequestParameterExceptions(
       MissingServletRequestParameterException e) {
     return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+  }
+
+  @ExceptionHandler(ApplicationNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ErrorResponse handleApplicationNotFoundExceptions(
+      ApplicationNotFoundException e) {
+    return new ErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
   }
 }
