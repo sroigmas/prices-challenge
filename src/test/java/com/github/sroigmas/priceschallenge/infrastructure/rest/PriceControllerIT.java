@@ -9,6 +9,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -51,6 +52,47 @@ class PriceControllerIT {
             jsonPath("$.end_date")
                 .value(expectedResponse.getEndDate().format(DateTimeFormatter.ISO_INSTANT)))
         .andExpect(jsonPath("$.final_price").value(expectedResponse.getFinalPrice()));
+  }
+
+  @Test
+  void givenWrongTypeId_whenGettingPrice_thenReturnsBadRequest() throws Exception {
+    ZonedDateTime date = ZonedDateTime.now();
+    Long productId = 35455L;
+    String brandId = "A";
+
+    ResultActions result =
+        mvc.perform(
+                get("/api/v1/prices")
+                    .param("date", date.toString())
+                    .param("product_id", productId.toString())
+                    .param("brand_id", brandId))
+            .andDo(print());
+
+    result
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+        .andExpect(jsonPath("$.message").value("brand_id should be of type java.lang.Long"));
+  }
+
+  @Test
+  void givenMissingId_whenGettingPrice_thenReturnsBadRequest() throws Exception {
+    ZonedDateTime date = ZonedDateTime.now();
+    Long productId = 35455L;
+
+    ResultActions result =
+        mvc.perform(
+                get("/api/v1/prices")
+                    .param("date", date.toString())
+                    .param("product_id", productId.toString()))
+            .andDo(print());
+
+    result
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+        .andExpect(
+            jsonPath("$.message")
+                .value(
+                    "Required request parameter 'brand_id' for method parameter type Long is not present"));
   }
 
   private static Stream<Arguments> givenIdsAndDate_whenGettingPrice_thenReturnsPrice() {
