@@ -18,7 +18,10 @@ This microservice exposes a REST API to get the price for a given product in a s
 ./mvnw clean install
 ./mvnw spring-boot:run
 ````
-You can check the OpenAPI documentation here: http://localhost:8080/swagger-ui/index.html
+You can check the OpenAPI documentation:
+- Using Swagger UI: http://localhost:8080/swagger-ui/index.html
+- In JSON format: http://localhost:8080/v3/api-docs
+- In YAML format: http://localhost:8080/v3/api-docs.yaml
 
 You can test the endpoint like this:
 http://localhost:8080/api/v1/prices?brand_id=1&product_id=35455&date=2020-06-14T16:00:00Z
