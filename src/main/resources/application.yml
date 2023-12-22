@@ -7,8 +7,6 @@ spring:
   h2:
     console:
       enabled: true
-  jackson:
-    property-naming-strategy: SNAKE_CASE
   mvc:
     format:
       date-time: iso
